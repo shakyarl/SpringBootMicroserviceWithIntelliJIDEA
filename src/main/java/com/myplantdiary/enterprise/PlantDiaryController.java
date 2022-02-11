@@ -6,6 +6,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * The controller fro Plant Diary REST endpoints and web UI
+ * <p>
+ * This class handles the CRUD operations for My Plant Diary specimens, via HTTP actions.
+ * </p>
+ * <p>
+ * This class also serves HTML based web pages, for UI interactions with plant specimens.
+ * </p>
+ * @author Rahul Shakya
+ */
+
 @Controller
 public class PlantDiaryController {
 
