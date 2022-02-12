@@ -3,8 +3,7 @@ package com.myplantdiary.enterprise;
 import com.myplantdiary.enterprise.dto.Specimen;
 import com.myplantdiary.enterprise.service.ISpecimenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +39,7 @@ public class PlantDiaryController {
     @GetMapping("/specimen")
     @ResponseBody
     public List<Specimen> fetchAllSpecimens(){
+
         return specimenService.fetchAll();
     }
 
@@ -56,7 +56,10 @@ public class PlantDiaryController {
      */
     @GetMapping("/specimen/{id}/")
     public ResponseEntity fetchSpecimenById(@PathVariable("id") String id) {
-        return new ResponseEntity(HttpStatus.OK);
+        Specimen foundSpecimen = specimenService.fetchById(Integer.parseInt(id));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity(foundSpecimen, headers, HttpStatus.OK);
     }
 
     /**
@@ -69,6 +72,8 @@ public class PlantDiaryController {
      * @param specimen a JSON representation of a specimen object.
      * @return the newly created specimen object.
      */
+
+    //Post http://127.0.0.1/specimen/ is currently giving an internal server error. Status 500.
     @PostMapping(value = "/specimen", consumes = "application/json", produces = "application/json")
     public Specimen createSpecimen(@RequestBody Specimen specimen){
         Specimen newSpecimen = null;
@@ -84,6 +89,13 @@ public class PlantDiaryController {
 
     @DeleteMapping("/specimen/{id}/")
     public ResponseEntity deleteSpecimen(@PathVariable("id") String id){
-        return new ResponseEntity(HttpStatus.OK);
+        try{
+            specimenService.delete(Integer.parseInt(id));
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 }
