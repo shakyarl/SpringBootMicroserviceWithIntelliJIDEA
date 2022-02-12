@@ -1,10 +1,15 @@
 package com.myplantdiary.enterprise;
 
 import com.myplantdiary.enterprise.dto.Specimen;
+import com.myplantdiary.enterprise.service.ISpecimenService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import javax.swing.text.html.parser.Entity;
+import java.util.List;
 
 /**
  * The controller fro Plant Diary REST endpoints and web UI
@@ -20,6 +25,9 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class PlantDiaryController {
 
+    @Autowired
+    ISpecimenService specimenService;
+
     /**
      * Handle the root (/) endpoint and return a start page.
      * @return
@@ -30,8 +38,9 @@ public class PlantDiaryController {
     }
 
     @GetMapping("/specimen")
-    public ResponseEntity fetchAllSpecimens(){
-        return new ResponseEntity(HttpStatus.OK);
+    @ResponseBody
+    public List<Specimen> fetchAllSpecimens(){
+        return specimenService.fetchAll();
     }
 
     /**
@@ -62,7 +71,15 @@ public class PlantDiaryController {
      */
     @PostMapping(value = "/specimen", consumes = "application/json", produces = "application/json")
     public Specimen createSpecimen(@RequestBody Specimen specimen){
-        return specimen;
+        Specimen newSpecimen = null;
+        try{
+            newSpecimen =specimenService.save(specimen);
+        }
+        catch (Exception e){
+            //TODO add logging
+        }
+
+        return newSpecimen;
     }
 
     @DeleteMapping("/specimen/{id}/")
